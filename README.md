@@ -13,8 +13,8 @@ Professional command-line tool for managing Tor network connections, circuits, a
 - **Circuit Control**: Create, list, and close custom circuits
 - **Identity Management**: Request new identity and rotate old circuits
 - **Relay Selection**: Filter and select relays by country, flags, and bandwidth
-- **Bridge Support**: Configure bridges for censorship circumvention *(coming soon)*
-- **Onion Services**: Manage hidden services *(coming soon)*
+- **Bridge Support**: Configure bridges for censorship circumvention
+- **Onion Services**: Create and manage hidden services (v3)
 - **Python Scripting**: Automate Tor control with Python scripts *(coming soon)*
 
 ## Installation
@@ -132,7 +132,33 @@ dialtor circuit create --exit-country US
 dialtor circuit create --relays AAAA...,BBBB...,CCCC...
 ```
 
-### 7. Rotate Old Circuits
+### 7. Configure Bridges
+
+```bash
+# Add a bridge for censorship circumvention
+dialtor bridge add "obfs4 192.0.2.1:9001 AAAA1111... cert=abcd,iat-mode=0"
+
+# List configured bridges
+dialtor bridge list
+
+# Remove a bridge
+dialtor bridge remove 192.0.2.1 9001
+```
+
+### 8. Create Onion Service
+
+```bash
+# Expose local web server as onion service
+dialtor onion create --virtual-port 80 --target-port 8080
+
+# List active onion services
+dialtor onion list
+
+# Remove onion service
+dialtor onion remove abc123def456.onion
+```
+
+### 9. Rotate Old Circuits
 
 ```bash
 # Close circuits older than 10 minutes (600 seconds)
@@ -249,6 +275,47 @@ dialtor relay info <fingerprint>
 dialtor relay info AAAA1111
 ```
 
+### Bridge Commands
+
+```bash
+# Add a bridge (vanilla)
+dialtor bridge add "192.0.2.1:9001"
+
+# Add obfs4 bridge
+dialtor bridge add "obfs4 192.0.2.1:9001 AAAA1111... cert=abcd,iat-mode=0"
+
+# List configured bridges
+dialtor bridge list
+
+# Test bridge connectivity
+dialtor bridge test 192.0.2.1 9001
+
+# Remove specific bridge
+dialtor bridge remove 192.0.2.1 9001
+
+# Clear all bridges
+dialtor bridge clear --force
+```
+
+### Onion Service Commands
+
+```bash
+# Create onion service (expose local port 8080 as port 80)
+dialtor onion create --virtual-port 80 --target-port 8080
+
+# Create service on custom address
+dialtor onion create --virtual-port 22 --target-port 22 --target-address 192.168.1.100
+
+# List active onion services
+dialtor onion list
+
+# Show service information
+dialtor onion info abc123def456.onion
+
+# Remove onion service
+dialtor onion remove abc123def456.onion
+```
+
 ## Troubleshooting
 
 ### Tor daemon not running
@@ -346,9 +413,12 @@ poetry run pytest -v --cov=dialtor --cov-report=html
   - [x] Custom relay selection for circuits
   - [x] Relay information display
   - [x] Integration with circuit creation
-- [ ] Phase 3: Bridge and Onion Services
-  - [ ] Bridge configuration
-  - [ ] Onion service management
+- [x] **Phase 3: Bridge and Onion Services** ✅
+  - [x] Bridge configuration (vanilla, obfs4, snowflake, etc.)
+  - [x] Bridge add/remove/list/test
+  - [x] Onion service creation (v3)
+  - [x] Ephemeral onion services
+  - [x] Onion service management
 - [ ] Phase 4: Scripting Support
   - [ ] Python scripting API
   - [ ] Example automation scripts
