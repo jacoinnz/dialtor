@@ -69,6 +69,53 @@ pip install dialtor
 
 *Note: First PyPI release pending. Currently install from source.*
 
+## Managed vs. External Tor
+
+dialtor can work with Tor in two modes:
+
+### External Tor (Default)
+Connect to an existing Tor daemon that you manage separately:
+
+```bash
+# Start Tor daemon
+brew services start tor  # macOS
+sudo systemctl start tor # Linux
+
+# Use dialtor
+dialtor connect verify
+```
+
+### Managed Tor (Embedded)
+dialtor automatically starts and stops the Tor daemon:
+
+```bash
+# Python API
+from dialtor.api import Dialtor
+
+with Dialtor(managed=True) as tor:
+    circuit = tor.create_circuit(exit_country="US")
+    # Tor daemon is running
+# Tor daemon automatically stopped
+```
+
+**Benefits of managed mode:**
+- Automatic process lifecycle management
+- No manual Tor daemon setup required
+- Clean shutdown when dialtor exits or is killed (SIGINT/SIGTERM)
+- Isolated Tor instance with custom configuration
+
+**When to use managed mode:**
+- Automation scripts
+- Temporary Tor usage
+- Testing and development
+- No system-wide Tor daemon desired
+
+**When to use external mode:**
+- Long-running Tor daemon
+- Multiple applications sharing Tor
+- System service integration
+- Persistent Tor configuration
+
 ## Quick Start
 
 ### 1. Verify Tor Connection

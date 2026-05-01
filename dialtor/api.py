@@ -58,6 +58,7 @@ class Dialtor:
         port: int = 9051,
         password: Optional[str] = None,
         config_file: Optional[Path] = None,
+        managed: bool = False,
     ) -> None:
         """Initialize Dialtor API.
 
@@ -65,6 +66,7 @@ class Dialtor:
             port: Tor control port (default: 9051)
             password: Control port password (optional)
             config_file: Path to config file (optional)
+            managed: If True, start and manage Tor daemon process (default: False)
         """
         # Load configuration
         if config_file:
@@ -82,6 +84,7 @@ class Dialtor:
         self.controller = TorController(
             port=config.connection.control_port,
             password=config.connection.password,
+            managed=managed,
         )
 
         # Initialize managers (will be available after connect)
