@@ -3,7 +3,7 @@
 from enum import Enum
 from typing import Optional, Set
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class RelayFlags(str, Enum):
@@ -36,10 +36,7 @@ class Relay(BaseModel):
     contact: Optional[str] = Field(None, description="Contact information")
     version: Optional[str] = Field(None, description="Tor version")
 
-    class Config:
-        """Pydantic config."""
-
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
     def __str__(self) -> str:
         """String representation."""

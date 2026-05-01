@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CircuitStatus(str, Enum):
@@ -39,10 +39,7 @@ class Circuit(BaseModel):
     purpose: str = Field("GENERAL", description="Circuit purpose")
     created_at: datetime = Field(default_factory=datetime.now, description="Creation timestamp")
 
-    class Config:
-        """Pydantic config."""
-
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
     @property
     def age_seconds(self) -> int:

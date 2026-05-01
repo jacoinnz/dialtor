@@ -86,6 +86,9 @@ def create(
     exit_country: Optional[str] = typer.Option(
         None, "--exit-country", help="Exit node country code (e.g., US, DE)"
     ),
+    relays: Optional[str] = typer.Option(
+        None, "--relays", help="Comma-separated relay fingerprints to use for circuit path"
+    ),
     hops: int = typer.Option(3, "--hops", help="Number of hops in circuit"),
     port: Optional[int] = typer.Option(None, "--port", "-p", help="Tor control port"),
     password: Optional[str] = typer.Option(None, "--password", help="Control port password"),
@@ -94,7 +97,11 @@ def create(
     Create a new Tor circuit.
 
     Creates a new circuit with the specified number of hops.
-    Optionally specify an exit node country.
+    Optionally specify an exit node country or specific relays to use.
+
+    Examples:
+        dialtor circuit create --exit-country DE
+        dialtor circuit create --relays AAAA1111...,BBBB2222...,CCCC3333...
     """
     # Load configuration
     config = ConfigLoader.load_with_env_override()
@@ -102,6 +109,11 @@ def create(
         config.connection.control_port = port
     if password:
         config.connection.password = password
+
+    # Parse relays if provided
+    relay_list = None
+    if relays:
+        relay_list = [r.strip() for r in relays.split(",")]
 
     with console.status(
         f"[bold green]Creating circuit with {hops} hops...", spinner="dots"
@@ -112,7 +124,9 @@ def create(
             manager = CircuitManager(controller)
 
             # Create circuit
-            circuit = manager.create_circuit(hops=hops, exit_country=exit_country)
+            circuit = manager.create_circuit(
+                hops=hops, exit_country=exit_country, relays=relay_list
+            )
 
             console.print(f"\n[green]✓[/green] Circuit created successfully!")
             console.print(f"  Circuit ID: [cyan]{circuit.id}[/cyan]")

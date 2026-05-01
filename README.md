@@ -12,7 +12,7 @@ Professional command-line tool for managing Tor network connections, circuits, a
 - **Connection Management**: Connect to Tor network and verify status
 - **Circuit Control**: Create, list, and close custom circuits
 - **Identity Management**: Request new identity and rotate old circuits
-- **Relay Selection**: Filter and select relays by country, flags, and bandwidth *(coming soon)*
+- **Relay Selection**: Filter and select relays by country, flags, and bandwidth
 - **Bridge Support**: Configure bridges for censorship circumvention *(coming soon)*
 - **Onion Services**: Manage hidden services *(coming soon)*
 - **Python Scripting**: Automate Tor control with Python scripts *(coming soon)*
@@ -106,7 +106,33 @@ dialtor identity new
 
 Sends NEWNYM signal to Tor for a fresh identity. Subsequent connections will use new circuits.
 
-### 5. Rotate Old Circuits
+### 5. List and Filter Relays
+
+```bash
+# List all relays
+dialtor relay list
+
+# Filter relays by country
+dialtor relay list --country DE
+
+# Filter by flags and bandwidth
+dialtor relay list --flags Fast,Stable --min-bandwidth 5242880
+
+# Show detailed relay information
+dialtor relay info AAAA1111BBBB2222
+```
+
+### 6. Create Circuit with Custom Relays
+
+```bash
+# Create circuit with specific exit country
+dialtor circuit create --exit-country US
+
+# Create circuit with specific relays
+dialtor circuit create --relays AAAA...,BBBB...,CCCC...
+```
+
+### 7. Rotate Old Circuits
 
 ```bash
 # Close circuits older than 10 minutes (600 seconds)
@@ -201,6 +227,28 @@ dialtor identity rotate --max-age 300
 dialtor identity status
 ```
 
+### Relay Commands
+
+```bash
+# List all available relays (default: 50)
+dialtor relay list
+
+# Filter relays by country
+dialtor relay list --country US
+
+# Filter by multiple criteria
+dialtor relay list --country DE --flags Fast,Stable --min-bandwidth 10485760
+
+# Increase display limit
+dialtor relay list --limit 100
+
+# Show detailed relay information
+dialtor relay info <fingerprint>
+
+# Example with partial fingerprint
+dialtor relay info AAAA1111
+```
+
 ## Troubleshooting
 
 ### Tor daemon not running
@@ -288,15 +336,16 @@ poetry run pytest -v --cov=dialtor --cov-report=html
 
 ## Roadmap
 
-- [x] Phase 1: Core Foundation (MVP)
+- [x] **Phase 1: Core Foundation (MVP)** ✅
   - [x] Project setup and structure
   - [x] Tor connection and authentication
   - [x] Basic circuit management
   - [x] Identity rotation
-- [ ] Phase 2: Advanced Relay Selection
-  - [ ] Relay filtering by country, flags, bandwidth
-  - [ ] Custom relay selection for circuits
-  - [ ] Interactive relay browser
+- [x] **Phase 2: Advanced Relay Selection** ✅
+  - [x] Relay filtering by country, flags, bandwidth
+  - [x] Custom relay selection for circuits
+  - [x] Relay information display
+  - [x] Integration with circuit creation
 - [ ] Phase 3: Bridge and Onion Services
   - [ ] Bridge configuration
   - [ ] Onion service management

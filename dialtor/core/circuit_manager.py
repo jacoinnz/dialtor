@@ -91,9 +91,34 @@ class CircuitManager:
             CircuitCreationError: If circuit creation fails
         """
         try:
-            if relays:
+            path_to_use = relays
+
+            # If exit_country specified but no specific relays, select exit node by country
+            if exit_country and not relays:
+                from dialtor.core.relay_selector import RelaySelector
+                from dialtor.models.relay import RelayFlags
+
+                selector = RelaySelector(self.controller)
+                selector.get_all_relays()  # Load relay cache
+
+                # Select exit relay from specified country
+                exit_relays = selector.select_random(
+                    count=1,
+                    country=exit_country,
+                    flags={RelayFlags.EXIT, RelayFlags.RUNNING, RelayFlags.VALID},
+                )
+
+                if not exit_relays:
+                    raise CircuitCreationError(
+                        f"No suitable exit relays found in country: {exit_country}"
+                    )
+
+                # Use selected exit relay as last hop
+                path_to_use = [exit_relays[0].fingerprint]
+
+            if path_to_use:
                 # Create circuit with specific relays
-                circuit_id = self.controller.controller.new_circuit(path=relays)
+                circuit_id = self.controller.controller.new_circuit(path=path_to_use)
             else:
                 # Create circuit and let Tor choose relays
                 circuit_id = self.controller.controller.new_circuit()
@@ -109,6 +134,8 @@ class CircuitManager:
 
             raise CircuitCreationError(f"Circuit {circuit_id} created but not found in list")
 
+        except CircuitCreationError:
+            raise
         except Exception as e:
             raise CircuitCreationError(f"Failed to create circuit: {e}") from e
 
