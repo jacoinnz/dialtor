@@ -23,12 +23,18 @@ def verify(
     password: Optional[str] = typer.Option(
         None, "--password", help="Control port password (overrides config)"
     ),
+    show_ip: bool = typer.Option(
+        False, "--show-ip", help="Show current Tor exit IP address"
+    ),
+    socks_port: int = typer.Option(9050, help="Tor SOCKS port for IP checking"),
 ) -> None:
     """
     Connect to Tor network and verify connection status.
 
     Connects to the Tor control port, authenticates, and displays
     information about the Tor daemon and network status.
+
+    Use --show-ip to also check your current Tor exit IP address.
     """
     # Load configuration
     config = ConfigLoader.load_with_env_override()
@@ -68,6 +74,29 @@ def verify(
         table.add_row("Available Info Keys", str(len(info_names)))
 
         console.print(table)
+
+        # Show IP if requested
+        if show_ip:
+            try:
+                import requests
+
+                console.print("\n[dim]Fetching Tor exit IP...[/dim]")
+                socks_proxy = f"socks5://127.0.0.1:{socks_port}"
+                proxies = {"http": socks_proxy, "https": socks_proxy}
+                response = requests.get(
+                    "https://api.ipify.org", proxies=proxies, timeout=10
+                )
+                tor_ip = response.text.strip()
+                console.print(f"[bold]Tor Exit IP:[/bold] [cyan]{tor_ip}[/cyan]")
+            except ImportError:
+                console.print(
+                    "\n[yellow]Note:[/yellow] Install 'requests' for IP checking: "
+                    "[cyan]pip install requests[/cyan]"
+                )
+            except Exception as e:
+                console.print(
+                    f"\n[yellow]Warning:[/yellow] Could not fetch Tor exit IP: {e}"
+                )
 
         # Check if we can connect to the network
         if built_circuits:

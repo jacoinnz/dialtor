@@ -63,6 +63,15 @@ pydantic = "^2.6.0"
 tomli = "^2.0.1"
 python-dotenv = "^1.0.0"
 
+[tool.poetry.extras]
+ip-check = ["requests"]
+
+[tool.poetry.group.ip-check]
+optional = true
+
+[tool.poetry.group.ip-check.dependencies]
+requests = "^2.31.0"
+
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
 pytest-cov = "^4.1.0"

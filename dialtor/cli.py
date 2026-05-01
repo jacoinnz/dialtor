@@ -95,7 +95,7 @@ def main() -> None:
 
 
 # Import and register command modules
-from dialtor.commands import bridge, circuit, connect, identity, onion, relay, script
+from dialtor.commands import bridge, circuit, connect, identity, ip, onion, relay, script
 
 app.add_typer(connect.app, name="connect")
 app.add_typer(circuit.app, name="circuit")
@@ -104,6 +104,7 @@ app.add_typer(relay.app, name="relay")
 app.add_typer(bridge.app, name="bridge")
 app.add_typer(onion.app, name="onion")
 app.add_typer(script.app, name="script")
+app.add_typer(ip.app, name="ip")
 # app.add_typer(relay.app, name="relay")
 # app.add_typer(identity.app, name="identity")
 # app.add_typer(bridge.app, name="bridge")

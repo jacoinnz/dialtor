@@ -122,11 +122,26 @@ with Dialtor(managed=True) as tor:
 
 ```bash
 dialtor connect verify
+
+# Or with IP address check
+dialtor connect verify --show-ip
 ```
 
 This connects to your local Tor daemon and displays connection status, version, and active circuits.
 
-### 2. List Active Circuits
+### 2. Check Your IP Address
+
+```bash
+# Full IP check (real IP vs Tor exit IP)
+dialtor ip check
+
+# Just show current Tor exit IP
+dialtor ip current
+```
+
+Verifies that Tor is routing your traffic correctly by comparing your real IP with your Tor exit IP.
+
+### 3. List Active Circuits
 
 ```bash
 dialtor circuit list
@@ -134,7 +149,7 @@ dialtor circuit list
 
 Shows all active Tor circuits with their status, paths (relay hops), and age.
 
-### 3. Create a New Circuit
+### 4. Create a New Circuit
 
 ```bash
 # Create a basic circuit (3 hops)
@@ -147,7 +162,7 @@ dialtor circuit create --exit-country US
 dialtor circuit create --hops 4
 ```
 
-### 4. Request New Identity
+### 5. Request New Identity
 
 ```bash
 dialtor identity new
@@ -155,7 +170,7 @@ dialtor identity new
 
 Sends NEWNYM signal to Tor for a fresh identity. Subsequent connections will use new circuits.
 
-### 5. List and Filter Relays
+### 6. List and Filter Relays
 
 ```bash
 # List all relays
@@ -171,7 +186,7 @@ dialtor relay list --flags Fast,Stable --min-bandwidth 5242880
 dialtor relay info AAAA1111BBBB2222
 ```
 
-### 6. Create Circuit with Custom Relays
+### 7. Create Circuit with Custom Relays
 
 ```bash
 # Create circuit with specific exit country
@@ -181,7 +196,7 @@ dialtor circuit create --exit-country US
 dialtor circuit create --relays AAAA...,BBBB...,CCCC...
 ```
 
-### 7. Configure Bridges
+### 8. Configure Bridges
 
 ```bash
 # Add a bridge for censorship circumvention
@@ -194,7 +209,7 @@ dialtor bridge list
 dialtor bridge remove 192.0.2.1 9001
 ```
 
-### 8. Create Onion Service
+### 9. Create Onion Service
 
 ```bash
 # Expose local web server as onion service
@@ -207,7 +222,7 @@ dialtor onion list
 dialtor onion remove abc123def456.onion
 ```
 
-### 9. Run Automation Scripts
+### 10. Run Automation Scripts
 
 ```bash
 # List example scripts
@@ -223,7 +238,7 @@ dialtor script show auto_rotate
 dialtor script run my_script.py
 ```
 
-### 10. Use Python API
+### 11. Use Python API
 
 ```python
 from dialtor.api import Dialtor
@@ -239,7 +254,7 @@ with Dialtor() as tor:
     print(f"Found {len(relays)} German fast relays")
 ```
 
-### 11. Rotate Old Circuits
+### 12. Rotate Old Circuits
 
 ```bash
 # Close circuits older than 10 minutes (600 seconds)
@@ -362,11 +377,27 @@ dialtor --show-completion fish
 # Verify connection to Tor
 dialtor connect verify
 
+# Verify with IP address check
+dialtor connect verify --show-ip
+
 # Use custom port
 dialtor connect verify --port 9052
 
 # Provide password
 dialtor connect verify --password "secret"
+```
+
+### IP Commands
+
+```bash
+# Check IP address and verify Tor connection
+dialtor ip check
+
+# Show current Tor exit IP only
+dialtor ip current
+
+# Check with custom SOCKS port
+dialtor ip check --socks-port 9150
 ```
 
 ### Circuit Commands
