@@ -15,7 +15,7 @@ Professional command-line tool for managing Tor network connections, circuits, a
 - **Relay Selection**: Filter and select relays by country, flags, and bandwidth
 - **Bridge Support**: Configure bridges for censorship circumvention
 - **Onion Services**: Create and manage hidden services (v3)
-- **Python Scripting**: Automate Tor control with Python scripts *(coming soon)*
+- **Python Scripting**: Full Python API and automation framework
 
 ## Installation
 
@@ -158,7 +158,39 @@ dialtor onion list
 dialtor onion remove abc123def456.onion
 ```
 
-### 9. Rotate Old Circuits
+### 9. Run Automation Scripts
+
+```bash
+# List example scripts
+dialtor script list
+
+# Run auto-rotation script
+dialtor script run auto_rotate
+
+# View script source
+dialtor script show auto_rotate
+
+# Run custom script
+dialtor script run my_script.py
+```
+
+### 10. Use Python API
+
+```python
+from dialtor.api import Dialtor
+
+# Use as context manager
+with Dialtor() as tor:
+    # Create circuit
+    circuit = tor.create_circuit(exit_country="US")
+    print(f"Circuit: {circuit.path_string}")
+
+    # List relays
+    relays = tor.list_relays(country="DE", flags=["Fast"])
+    print(f"Found {len(relays)} German fast relays")
+```
+
+### 11. Rotate Old Circuits
 
 ```bash
 # Close circuits older than 10 minutes (600 seconds)
