@@ -61,11 +61,13 @@ poetry install
 pip install -e .
 ```
 
-#### From PyPI *(coming soon)*:
+#### From PyPI:
 
 ```bash
 pip install dialtor
 ```
+
+*Note: First PyPI release pending. Currently install from source.*
 
 ## Quick Start
 
@@ -236,6 +238,73 @@ export DIALTOR_PASSWORD="your_password"
 export DIALTOR_LOG_LEVEL="DEBUG"
 
 dialtor connect verify
+```
+
+## Documentation
+
+### Man Pages
+
+dialtor includes comprehensive Unix manual pages. Install them system-wide:
+
+```bash
+sudo make install-man
+```
+
+Then view with:
+
+```bash
+man dialtor
+```
+
+Or view directly without installation:
+
+```bash
+man docs/man/dialtor.1
+```
+
+See `docs/man/README.md` for detailed installation instructions.
+
+## Shell Completion
+
+dialtor supports tab completion for bash, zsh, and fish shells.
+
+### Install Completion
+
+**Bash:**
+```bash
+dialtor --install-completion bash
+```
+
+**Zsh:**
+```bash
+dialtor --install-completion zsh
+```
+
+**Fish:**
+```bash
+dialtor --install-completion fish
+```
+
+The completion scripts will be automatically installed to the appropriate location for your shell. You may need to restart your shell or source your configuration file for the changes to take effect.
+
+### Usage
+
+After installation, you can use Tab to autocomplete:
+
+```bash
+dialtor <Tab>              # Shows available commands
+dialtor circuit <Tab>      # Shows circuit subcommands
+dialtor relay list --<Tab> # Shows available options
+```
+
+### Show Completion Script
+
+To view the completion script without installing:
+
+```bash
+dialtor --show-completion bash
+dialtor --show-completion zsh
+dialtor --show-completion fish
 ```
 
 ## Command Reference
@@ -451,13 +520,17 @@ poetry run pytest -v --cov=dialtor --cov-report=html
   - [x] Onion service creation (v3)
   - [x] Ephemeral onion services
   - [x] Onion service management
-- [ ] Phase 4: Scripting Support
-  - [ ] Python scripting API
-  - [ ] Example automation scripts
-- [ ] Phase 5: Polish
-  - [ ] Shell completion
-  - [ ] Man pages
-  - [ ] PyPI release
+- [x] **Phase 4: Scripting Support** ✅
+  - [x] Python scripting API
+  - [x] Example automation scripts
+- [x] **Phase 5: Polish** ✅
+  - [x] Shell completion
+  - [x] Man pages
+  - [x] PyPI release preparation
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes and releases.
 
 ## Contributing
 
@@ -492,6 +565,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Repository**: https://github.com/jacoinnz/dialtor
 - **Issue Tracker**: https://github.com/jacoinnz/dialtor/issues
+- **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- **Release Process**: [RELEASE.md](RELEASE.md)
+- **API Documentation**: [docs/API.md](docs/API.md)
 - **Tor Project**: https://www.torproject.org/
 - **stem Documentation**: https://stem.torproject.org/
 

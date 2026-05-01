@@ -1,0 +1,263 @@
+.TH DIALTOR 1 "2026-05-01" "dialtor 0.1.0" "User Commands"
+.SH NAME
+dialtor \- Advanced Tor network control CLI
+.SH SYNOPSIS
+.B dialtor
+[\fIGLOBAL OPTIONS\fR]
+.I COMMAND
+[\fICOMMAND OPTIONS\fR]
+[\fIARGUMENTS\fR]
+.SH DESCRIPTION
+.B dialtor
+is a professional command-line tool for managing Tor network connections, circuits, and relays. It provides fine-grained control over Tor circuits, identity rotation, relay selection, bridge configuration, and onion services.
+.PP
+.B dialtor
+connects to the local Tor daemon via the control port and uses the Tor control protocol to manage network operations. It can be used both as a CLI tool and as a Python library for automation.
+.SH COMMANDS
+.SS Connection Management
+.TP
+.B connect verify
+Connect to Tor daemon and verify network status
+.SS Circuit Control
+.TP
+.B circuit list
+List all active Tor circuits
+.TP
+.B circuit create
+Create a new circuit with optional country/relay selection
+.TP
+.B circuit info \fICIRCUIT-ID\fR
+Show detailed information about a specific circuit
+.TP
+.B circuit close \fICIRCUIT-ID\fR
+Close a specific circuit
+.SS Identity Management
+.TP
+.B identity new
+Request a new Tor identity (NEWNYM signal)
+.TP
+.B identity rotate
+Close circuits older than specified age
+.TP
+.B identity status
+Show current identity information
+.SS Relay Management
+.TP
+.B relay list
+List and filter Tor relays by country, flags, or bandwidth
+.TP
+.B relay info \fIFINGERPRINT\fR
+Show detailed information about a specific relay
+.SS Bridge Configuration
+.TP
+.B bridge add \fIBRIDGE-LINE\fR
+Add a bridge for censorship circumvention
+.TP
+.B bridge list
+List configured bridges
+.TP
+.B bridge test \fIADDRESS\fR \fIPORT\fR
+Test bridge connectivity
+.TP
+.B bridge remove \fIADDRESS\fR \fIPORT\fR
+Remove a configured bridge
+.TP
+.B bridge clear
+Remove all bridges
+.SS Onion Services
+.TP
+.B onion create
+Create a new ephemeral onion service (v3)
+.TP
+.B onion list
+List active onion services
+.TP
+.B onion info \fISERVICE-ID\fR
+Show onion service details
+.TP
+.B onion remove \fISERVICE-ID\fR
+Remove an onion service
+.SS Scripting
+.TP
+.B script run \fISCRIPT-PATH\fR
+Execute a Python automation script
+.TP
+.B script list
+List available example scripts
+.TP
+.B script show \fISCRIPT-NAME\fR
+Display source code of an example script
+.SH GLOBAL OPTIONS
+.TP
+.B \-\-install\-completion \fISHELL\fR
+Install shell completion for bash, zsh, or fish
+.TP
+.B \-\-show\-completion \fISHELL\fR
+Show completion script without installing
+.TP
+.B \-\-help
+Show help message and exit
+.SH EXAMPLES
+.SS Basic Usage
+Verify Tor connection:
+.PP
+.nf
+.RS
+dialtor connect verify
+.RE
+.fi
+.PP
+List active circuits:
+.PP
+.nf
+.RS
+dialtor circuit list
+.RE
+.fi
+.PP
+Create circuit with US exit node:
+.PP
+.nf
+.RS
+dialtor circuit create \-\-exit\-country US
+.RE
+.fi
+.SS Advanced Relay Selection
+List fast German relays:
+.PP
+.nf
+.RS
+dialtor relay list \-\-country DE \-\-flags Fast,Stable
+.RE
+.fi
+.PP
+Filter relays by bandwidth (minimum 5 MB/s):
+.PP
+.nf
+.RS
+dialtor relay list \-\-min\-bandwidth 5242880
+.RE
+.fi
+.SS Identity Management
+Request new identity:
+.PP
+.nf
+.RS
+dialtor identity new
+.RE
+.fi
+.PP
+Close circuits older than 10 minutes:
+.PP
+.nf
+.RS
+dialtor identity rotate \-\-max\-age 600
+.RE
+.fi
+.SS Bridge Configuration
+Add obfs4 bridge:
+.PP
+.nf
+.RS
+dialtor bridge add "obfs4 192.0.2.1:9001 AAAA1111... cert=abcd,iat\-mode=0"
+.RE
+.fi
+.SS Onion Services
+Create onion service for local web server:
+.PP
+.nf
+.RS
+dialtor onion create \-\-virtual\-port 80 \-\-target\-port 8080
+.RE
+.fi
+.SS Automation
+Run automation script:
+.PP
+.nf
+.RS
+dialtor script run auto_rotate
+.RE
+.fi
+.SH FILES
+.TP
+.I ~/.dialtor/config.toml
+User configuration file
+.TP
+.I ~/.config/dialtor/config.toml
+Alternative configuration location
+.TP
+.I /etc/dialtor/config.toml
+System-wide configuration
+.SH ENVIRONMENT
+.TP
+.B DIALTOR_CONTROL_PORT
+Override Tor control port (default: 9051)
+.TP
+.B DIALTOR_PASSWORD
+Tor control port password
+.TP
+.B DIALTOR_LOG_LEVEL
+Logging level (DEBUG, INFO, WARNING, ERROR)
+.SH CONFIGURATION
+.B dialtor
+reads configuration from TOML files in the following order:
+.IP 1. 4
+~/.dialtor/config.toml
+.IP 2.
+~/.config/dialtor/config.toml
+.IP 3.
+/etc/dialtor/config.toml
+.PP
+Environment variables override configuration file settings.
+.PP
+Example configuration:
+.PP
+.nf
+.RS
+[connection]
+control_port = 9051
+password = "your_password_here"
+timeout = 30
+
+[relay_selection]
+preferred_countries = ["us", "de", "nl"]
+min_bandwidth = 1048576
+required_flags = ["Fast", "Stable"]
+
+[logging]
+level = "INFO"
+.RE
+.fi
+.SH PREREQUISITES
+.TP
+.B Tor daemon
+Must be running and accessible on control port (default: 9051)
+.TP
+.B Python 3.10+
+Required for running dialtor
+.PP
+Install Tor:
+.PP
+.B macOS:
+brew install tor && brew services start tor
+.PP
+.B Ubuntu/Debian:
+sudo apt-get install tor && sudo systemctl start tor
+.SH SEE ALSO
+.BR tor (1),
+.BR torrc (5)
+.PP
+.B Tor Project:
+https://www.torproject.org/
+.PP
+.B dialtor GitHub:
+https://github.com/jacoinnz/dialtor
+.PP
+.B stem Documentation:
+https://stem.torproject.org/
+.SH AUTHORS
+dialtor was created by the dialtor contributors.
+.SH BUGS
+Report bugs at: https://github.com/jacoinnz/dialtor/issues
+.SH COPYRIGHT
+This project is licensed under the MIT License.

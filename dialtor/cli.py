@@ -22,7 +22,7 @@ install(show_locals=False)
 app = typer.Typer(
     name="dialtor",
     help="Advanced Tor network control CLI",
-    add_completion=False,
+    add_completion=True,
     pretty_exceptions_enable=False,
 )
 
