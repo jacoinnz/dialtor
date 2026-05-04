@@ -28,7 +28,7 @@ class Relay(BaseModel):
     nickname: str = Field(..., description="Relay nickname")
     address: str = Field(..., description="IP address")
     or_port: int = Field(..., description="OR (Onion Router) port")
-    dir_port: int = Field(0, description="Directory port")
+    dir_port: Optional[int] = Field(None, description="Directory port (None if not a directory)")
     flags: Set[RelayFlags] = Field(default_factory=set, description="Relay flags")
     bandwidth: int = Field(0, description="Bandwidth in bytes/sec")
     country_code: Optional[str] = Field(None, description="Two-letter country code")
