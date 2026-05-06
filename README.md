@@ -141,7 +141,28 @@ dialtor ip current
 
 Verifies that Tor is routing your traffic correctly by comparing your real IP with your Tor exit IP.
 
-### 3. List Active Circuits
+### 3. Run Commands Through Tor
+
+```bash
+# Run any command through Tor
+dialtor run curl https://api.ipify.org
+
+# SSH through Tor
+dialtor run ssh user@example.com
+
+# Telnet through Tor
+dialtor run telnet example.com 80
+
+# Git clone through Tor
+dialtor run git clone https://github.com/user/repo
+
+# Python script through Tor
+dialtor run python script.py
+```
+
+Execute any terminal command through Tor's SOCKS proxy automatically.
+
+### 4. List Active Circuits
 
 ```bash
 dialtor circuit list
@@ -149,7 +170,7 @@ dialtor circuit list
 
 Shows all active Tor circuits with their status, paths (relay hops), and age.
 
-### 4. Create a New Circuit
+### 5. Create a New Circuit
 
 ```bash
 # Create a basic circuit (3 hops)
@@ -162,7 +183,7 @@ dialtor circuit create --exit-country US
 dialtor circuit create --hops 4
 ```
 
-### 5. Request New Identity
+### 6. Request New Identity
 
 ```bash
 dialtor identity new
@@ -170,7 +191,7 @@ dialtor identity new
 
 Sends NEWNYM signal to Tor for a fresh identity. Subsequent connections will use new circuits.
 
-### 6. List and Filter Relays
+### 7. List and Filter Relays
 
 ```bash
 # List all relays
@@ -186,7 +207,7 @@ dialtor relay list --flags Fast,Stable --min-bandwidth 5242880
 dialtor relay info AAAA1111BBBB2222
 ```
 
-### 7. Create Circuit with Custom Relays
+### 8. Create Circuit with Custom Relays
 
 ```bash
 # Create circuit with specific exit country
@@ -196,7 +217,7 @@ dialtor circuit create --exit-country US
 dialtor circuit create --relays AAAA...,BBBB...,CCCC...
 ```
 
-### 8. Configure Bridges
+### 9. Configure Bridges
 
 ```bash
 # Add a bridge for censorship circumvention
@@ -209,7 +230,7 @@ dialtor bridge list
 dialtor bridge remove 192.0.2.1 9001
 ```
 
-### 9. Create Onion Service
+### 10. Create Onion Service
 
 ```bash
 # Expose local web server as onion service
@@ -222,7 +243,7 @@ dialtor onion list
 dialtor onion remove abc123def456.onion
 ```
 
-### 10. Run Automation Scripts
+### 11. Run Automation Scripts
 
 ```bash
 # List example scripts
@@ -238,7 +259,7 @@ dialtor script show auto_rotate
 dialtor script run my_script.py
 ```
 
-### 11. Use Python API
+### 12. Use Python API
 
 ```python
 from dialtor.api import Dialtor
@@ -254,7 +275,7 @@ with Dialtor() as tor:
     print(f"Found {len(relays)} German fast relays")
 ```
 
-### 12. Rotate Old Circuits
+### 13. Rotate Old Circuits
 
 ```bash
 # Close circuits older than 10 minutes (600 seconds)
@@ -300,6 +321,101 @@ export DIALTOR_PASSWORD="your_password"
 export DIALTOR_LOG_LEVEL="DEBUG"
 
 dialtor connect verify
+```
+
+## Running Commands Through Tor
+
+The `dialtor run` command routes any terminal command through Tor automatically.
+
+### How It Works
+
+`dialtor run` sets up the environment with Tor proxy settings and executes your command:
+
+```bash
+dialtor run <command> [args...]
+```
+
+**Environment variables set:**
+- `ALL_PROXY=socks5://127.0.0.1:9050`
+- `HTTP_PROXY`, `HTTPS_PROXY`, `FTP_PROXY`
+- `SOCKS5_PROXY`
+- Git and SSH proxy commands
+
+### Common Use Cases
+
+**Web Requests:**
+```bash
+dialtor run curl https://api.ipify.org
+dialtor run wget https://example.com/file.zip
+dialtor run python -c "import requests; print(requests.get('https://api.ipify.org').text)"
+```
+
+**SSH Connections:**
+```bash
+dialtor run ssh user@example.com
+dialtor run ssh -p 2222 user@example.com
+dialtor run scp file.txt user@example.com:/path/
+```
+
+**Telnet:**
+```bash
+dialtor run telnet example.com 80
+dialtor run telnet towel.blinkenlights.nl  # Star Wars ASCII art
+```
+
+**Git Operations:**
+```bash
+dialtor run git clone https://github.com/user/repo.git
+dialtor run git pull
+dialtor run git push origin main
+```
+
+**Any Application:**
+```bash
+dialtor run python script.py
+dialtor run node server.js
+dialtor run npm install
+dialtor run docker pull image:tag
+```
+
+### Verify It's Working
+
+```bash
+# Check your real IP
+curl https://api.ipify.org
+
+# Check IP through Tor
+dialtor run curl https://api.ipify.org
+
+# Should show different IPs!
+```
+
+### Options
+
+```bash
+# Custom SOCKS port
+dialtor run --socks-port 9150 curl https://api.ipify.org
+
+# Quiet mode (suppress dialtor output)
+dialtor run --quiet ssh user@example.com
+dialtor run -q curl https://api.ipify.org
+```
+
+### Alternative: Create Aliases
+
+Add to `~/.zshrc` or `~/.bashrc`:
+
+```bash
+alias torcurl='dialtor run curl'
+alias torssh='dialtor run ssh'
+alias torgit='dialtor run git'
+```
+
+Then use:
+```bash
+torcurl https://api.ipify.org
+torssh user@example.com
+torgit clone https://github.com/user/repo
 ```
 
 ## Documentation
@@ -398,6 +514,37 @@ dialtor ip current
 
 # Check with custom SOCKS port
 dialtor ip check --socks-port 9150
+```
+
+### Run Commands
+
+```bash
+# Run any command through Tor
+dialtor run curl https://api.ipify.org
+dialtor run wget https://example.com/file.zip
+
+# SSH through Tor
+dialtor run ssh user@example.com
+dialtor run ssh user@example.com --port 2222
+
+# Telnet through Tor
+dialtor run telnet example.com 80
+dialtor run telnet towel.blinkenlights.nl
+
+# Git operations through Tor
+dialtor run git clone https://github.com/user/repo
+dialtor run git pull
+dialtor run git push
+
+# Python/scripts through Tor
+dialtor run python script.py
+dialtor run node app.js
+
+# Custom SOCKS port
+dialtor run --socks-port 9150 curl https://api.ipify.org
+
+# Quiet mode (no dialtor output)
+dialtor run --quiet curl https://api.ipify.org
 ```
 
 ### Circuit Commands
